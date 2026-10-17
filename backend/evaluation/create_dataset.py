@@ -39,7 +39,7 @@ examples = [
                
                },
 
-     { "inputs":{"question":"In the architecture diagram, what follows each Multi-Head Attention block?"},
+     { "inputs":{"question":"In the Transformer model architecture diagram (Figure 1), what comes right after each Multi-Head Attention layer?"},
             "outputs":{"answer":"An “Add & Norm” step (residual connection + layer normalization)"}
            
            },
