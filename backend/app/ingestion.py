@@ -3,8 +3,8 @@
 from unstructured.partition.pdf import partition_pdf
 from unstructured.chunking.title import chunk_by_title
 
-from app.config import CHROMA_DIR, EMBEDDING_MODEL
-from app.config import LLM_MODEL
+from app.config import CHROMA_DIR, EMBEDDING_MODEL, LLM_MODEL, DATABASE_URL, COLLECTION_NAME
+
 #Langchain component
 from typing import List
 import json
@@ -12,6 +12,8 @@ from langchain_core.documents import Document
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_chroma import Chroma
 from langchain_core.messages import  HumanMessage
+
+from langchain_postgres import PGVector
 from dotenv import  load_dotenv
 
 load_dotenv()
@@ -210,10 +212,11 @@ def sumerise_chunks(chunks):
 #Get the create vector store
 
 def get_vectorstore():
-    return Chroma(
-        persist_directory=CHROMA_DIR,
-        embedding_function=OpenAIEmbeddings(model=EMBEDDING_MODEL),
-        collection_metadata={"hnsw:space":"cosine",}
+    return PGVector(
+        embeddings=OpenAIEmbeddings(model=EMBEDDING_MODEL),
+        collection_name=COLLECTION_NAME,
+        connection=DATABASE_URL,
+        use_jsonb=True
     )
 
 

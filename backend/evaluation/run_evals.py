@@ -43,5 +43,5 @@ if __name__ == "__main__":
     target,
     data="attention-paper-qa01",
     evaluators=[correctness],
-    experiment_prefix="baseline-chroma"
+    experiment_prefix="pgvector"
 )
