@@ -10,7 +10,8 @@ def generate_final_answer(db,user_question,chat_history, document_id):
    
 
   
-
+    search_question = user_question
+    chunks = []
     try:
         #Initailize LLM (needs vision model for images)
         llm = ChatOpenAI(model=LLM_MODEL, temperature=0)
@@ -79,8 +80,13 @@ CONTENT TO ANALYZE:"""
 
         return {
             "answer": response.content,
+            "search_question": search_question,        
+            "chunks_used": [c.metadata["chunk_index"] for c in chunks],
             "sources": [{"source": c.metadata["source"], "page": c.metadata["page_number"]} for c in chunks],
         }
     except Exception as e:
         print(f"Answer generation failed: {e}")
-        return {"answer": "Sorry, I encountered an error while generating the answer.", "sources": []}
+        return {"answer": "Sorry, I encountered an error while generating the answer.", 
+                "search_question": search_question,        
+                "chunks_used": [],
+                "sources": []}
