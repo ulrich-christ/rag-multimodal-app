@@ -15,9 +15,9 @@ class Grade(BaseModel):
 judge = ChatOpenAI(model=JUDGE_MODEL, temperature=0).with_structured_output(Grade)
 from langsmith import Client
 client = Client()
-
+EVAL_DOCUMENT_ID = 1
 def target(inputs:dict)->dict:
-    result = generate_final_answer(db,inputs["question"], chat_history=[])
+    result = generate_final_answer(db,inputs["question"], chat_history={}, document_id=EVAL_DOCUMENT_ID)
     return {"answer":result["answer"]}
 
 

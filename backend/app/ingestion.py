@@ -222,9 +222,12 @@ def get_vectorstore():
 
 #Chains all the pipline and send the number of chunks
 
-def ingest_file(file_path):
+def ingest_file(file_path, user_id:int, document_id:int):
     elements = partition_document(file_path=file_path)
     chunks=create_chunk_by_title(elements=elements)
     docs=sumerise_chunks(chunks=chunks)
+    for d in docs:
+        d.metadata["user_id"] = user_id
+        d.metadata["document_id"] = document_id
     get_vectorstore().add_documents(docs)
     return len(docs)

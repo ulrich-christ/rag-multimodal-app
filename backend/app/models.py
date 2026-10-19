@@ -16,3 +16,20 @@ class UserCreate(SQLModel):
 class UserRead(SQLModel):
     id:int
     email:str
+
+
+class Document(SQLModel, table=True):
+    __tablename__ = "documents"
+    id:int | None = Field(default=None, primary_key=True)
+    user_id : int = Field(foreign_key="users.id", index=True)
+    filename: str
+    status:str = "processing"
+    chunk_count:int=0
+    created_at : datetime=Field(default_factory=lambda:datetime.now(timezone.utc))
+
+class DocumentRead(SQLModel):
+    id:int
+    filename:str
+    status:str
+    chunk_count:int
+    created_at:datetime

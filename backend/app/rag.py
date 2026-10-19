@@ -4,7 +4,7 @@ import json
 from app.config import LLM_MODEL
 
 
-def generate_final_answer(db,user_question,chat_history):
+def generate_final_answer(db,user_question,chat_history, document_id):
     """Generate final answer using multimodal content"""
     #creating the chat history list
    
@@ -29,7 +29,7 @@ def generate_final_answer(db,user_question,chat_history):
                 search_question = user_question
 
         #Step 2: Find relevant documents
-        retriever = db.as_retriever(search_kwargs={"k":3})
+        retriever = db.as_retriever(search_kwargs={"k":3,  "filter": {"document_id": {"$eq": document_id}},})
         chunks = retriever.invoke(search_question)
 
         #build the text prompt
