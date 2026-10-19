@@ -1,7 +1,7 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlmodel import Session, select
-
+from app.tasks import ingestion_document_task
 
 from pydantic import BaseModel
 import os
@@ -74,22 +74,21 @@ def upload_file(file:UploadFile=File(...), current_user:User = Depends(get_curre
     with open(file_path, 'wb') as buffer:
         shutil.copyfileobj(file.file,buffer)
 
-    try:
-            doc.chunk_count = ingest_file(file_path, user_id=current_user.id, document_id=doc.id)
-            doc.status = "ready"
-    except Exception as e:
-            print(f"ingestion failed: {e}")
-            doc.status="failed"
-    session.add(doc)
-    session.commit()
-    session.refresh(doc)
-
+    ingestion_document_task.delay(doc.id, file_path)
     return doc
 
-@app.get("/documents", response_model=list[DocumentRead])
-def list_documents(current_user:User = Depends(get_current_user), session:Session=Depends(get_session)):
 
-     return session.exec(select(Document).where(Document.user_id==current_user.id)).all()
+
+@app.get("/documents/{document_id}", response_model=DocumentRead)
+def list_documents(document_id:int,current_user:User = Depends(get_current_user), session:Session=Depends(get_session)):
+    doc = session.get(Document, document_id)
+    if doc is None:
+            raise HTTPException(status_code=404, detail="Document Not found")
+    if doc.user_id != current_user.id:
+             raise HTTPException(status_code=403, detail="Not Your Documents")
+    if doc.status != "ready":
+             raise HTTPException(status_code=400, detail="Documents not ready Yet")
+    return doc
 
 class ChatRequest(BaseModel):
     document_id:int
