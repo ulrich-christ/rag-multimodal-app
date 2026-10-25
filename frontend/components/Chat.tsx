@@ -43,17 +43,20 @@ export default function Chat({document_id}:ChatProps){
             setLoading(false)
         }
      }
-     
+         const inputClass = "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
+
     return (
        <div className="flex flex-col gap-3">
         {messages.map((m, i)=>(
 
-            <p key={i} className={`${m.owner==="user"  ? "self-end bg-blue-700 " : "self-start whitespace-pre-wrap bg-gray-600"} ${m.chunks_used?.map((c)=>(<p>{c}</p>)).join(", ")}` }>{m.content}</p>
+            <p key={i} className={`${m.owner==="user"  ? "self-end bg-blue-700 whitespace-pre-wrap rounded-lg px-3 py-2 max-w-[80%] text-white" : "self-start whitespace-pre-wrap bg-gray-600 rounded-lg px-3 py-2 max-w-[80%] text-white"}` }>{m.content} {m.owner === "assistant" ? m.chunks_used?.map((c)=>(`#${c}`)).join(", ") :""}</p>
         ))}
         {loading && <p>Réflexion......</p>}
-        <form onSubmit={handleSubmit}>
+        {error && <p>{error}</p>
+        }
+        <form onSubmit={handleSubmit} className="flex gap-2">
              <input type="text" onChange={(e)=> setQuestion(e.target.value)} value={question} placeholder="Entrer votre Question"/>
-             <button type="submit" disabled={loading}>Envoiyer</button>
+             <button className={inputClass} type="submit" disabled={loading}>Envoiyer</button>
         </form>
        
        </div>
