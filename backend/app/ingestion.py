@@ -1,5 +1,4 @@
 #the partion method the first method to partion our pdf into atomic element
-
 from unstructured.partition.pdf import partition_pdf
 from unstructured.chunking.title import chunk_by_title
 
@@ -10,7 +9,6 @@ from typing import List
 import json
 from langchain_core.documents import Document
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
-from langchain_chroma import Chroma
 from langchain_core.messages import  HumanMessage
 
 from langchain_postgres import PGVector
