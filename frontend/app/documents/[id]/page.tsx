@@ -4,8 +4,7 @@ import {useState, useEffect, Suspense} from "react"
 import {apiFetch} from "@/lib/api"
 import Link from "next/link"
 import DOMPurify from "dompurify";
-
-
+import Chat from "@/components/Chat"
 type Doc = {
     id:number;
     filename:string;
@@ -70,14 +69,21 @@ function DocumentPipeline(){
 
    
     const nbImages = chunks.reduce((total, c) => total + c.images_base64.length, 0)
-  console.log(chunks)
 
     return (
-        <main className="mx-auto flex w-full max-w-4xl flex-col gap-6 p-4">
+             <main className="mx-auto flex w-full max-w-4xl flex-col gap-6 p-4">
+            
                 {/* Lien retour en haut, puis le nom du fichier comme titre */}
                 <Link href={"/documents"} className="text-sm text-blue-500 hover:underline">← Mes documents</Link>
                 <h1 className="truncate text-xl font-semibold">{doc.filename}</h1>
+            <div className="mx-auto flex w-full">
+                <button className={`px-3 py-1 rounded ${activetab === "pipeline" ? "bg-blue-600 text-white" : "text-gray-400"}`} onClick={() => setActiveTab("pipeline")}>Pipeline</button>
+                <button className={`px-3 py-1 rounded ${activetab === "chat" ? "bg-blue-600 text-white" : "text-gray-400"}`} onClick={() => setActiveTab("chat")}>Chat</button>
+            </div>
+            {
+                activetab === "pipeline"  && ( <>
 
+                
                 {/* Les 6 étapes du pipeline, dans l'ordre : de l'ingestion jusqu'au modèle */}
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                     <div className="rounded-lg border border-gray-700 p-3 text-xs text-gray-400">
@@ -148,7 +154,17 @@ function DocumentPipeline(){
                         </div>
                     ))}
                 </div>
-        </main>
+                </>)
+                
+
+            } 
+                 
+                       <div className={`${activetab==="chat"  ? "" : "hidden"}`}>
+                        <Chat document_id={Number(doc.id)} />
+                    </div>
+            
+         </main>
+       
       
       
     )
