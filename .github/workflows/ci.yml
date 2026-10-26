@@ -17,4 +17,13 @@ jobs:
           node-version: 24
       - run: npm ci                
       - run: npm run lint                
-      - run: npm run build                
+      - run: npm run build
+
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v5
+      - run: docker build -t rag-backend .
