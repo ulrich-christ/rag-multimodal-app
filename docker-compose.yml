@@ -53,6 +53,22 @@ services:
     depends_on:
       - api
 
+  caddy:
+    image: caddy:2
+    profiles: ["prod"]
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      DOMAIN: ${DOMAIN}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+    depends_on:
+      - api
+      - frontend
+
 volumes:
   pgdata:
   uploads:
+  caddy_data:
